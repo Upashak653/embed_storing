@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pinecone import Pinecone
 import os
-
+import psycopg2
 
 load_dotenv()
 client = OpenAI()
@@ -32,6 +32,9 @@ DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "port": os.getenv("DB_PORT", "5432")
 }
+
+def get_supabase_conn():
+    return psycopg2.connect(SUPABASE_DB_URL)
 
 # Shared RAG Tuning Hyperparameters
 CHUNK_SIZE = 600

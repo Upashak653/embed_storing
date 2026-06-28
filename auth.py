@@ -3,7 +3,7 @@ import bcrypt
 import secrets
 import re
 from datetime       import datetime, timedelta
-from config         import DB_CONFIG
+from config         import get_supabase_conn
 
 # ── Simple JWT-like token using secrets ──────────────────────────────────────
 # For production use python-jose or PyJWT, but this is secure enough for internal use
@@ -61,7 +61,7 @@ def register_user(name: str, email: str, password: str, department: str = "") ->
     hashed = _hash_password(password)
 
     try:
-        with psycopg2.connect(**DB_CONFIG) as conn:
+        with get_supabase_conn as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO rag.users (name, email, password, role, dept, avatar)
@@ -93,7 +93,7 @@ def login_user(email: str, password: str) -> dict:
     email = email.strip().lower()
 
     try:
-        with psycopg2.connect(**DB_CONFIG) as conn:
+        with get_supabase_conn as conn:
             with conn.cursor() as cur:
                 # Fetch user including hashed password
                 cur.execute("""
@@ -134,7 +134,7 @@ def get_user_by_token(token: str) ->dict | None:
     user_id = _verify_token(token)
     if not user_id: return None
     try:
-        with psycopg2.connect(**DB_CONFIG) as conn:
+        with get_supabase_conn as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT id, name, email, role, dept, avatar
