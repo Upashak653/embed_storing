@@ -16,7 +16,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://sap-api-advisor.vercel.app",
+        "https://sap-api-advisor-479lil8xx-upashak.vercel.app",
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
