@@ -4,7 +4,7 @@ from fastapi.middleware.cors    import CORSMiddleware
 from fastapi.concurrency        import run_in_threadpool
 from pydantic                   import BaseModel
 from typing                     import Literal
-
+from config                     import get_supabase_conn
 from search                     import deduplicated_hybrid_search
 from arcade                     import expand_with_graph, apply_feedback
 from auth                       import register_user, login_user, get_user_by_token, logout_user
@@ -207,11 +207,13 @@ async def auth_logout(req: LogoutRequest):
 @app.get("/auth/users")
 async def auth_users():
     try:
-        with psycopg2.connect(**DB_CONFIG) as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT id, name, email, role, dept, avatar, created_at, last_login FROM rag.users ORDER BY id")
-                rows = cur.fetchall()
-                users = [{"id":r[0],"name":r[1],"email":r[2],"role":r[3],"dept":r[4],"avatar":r[5]} for r in rows]
-                return {"status":"ok","users":users}
+        conn = get_supabase_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT id, username, email, role, dept, avatar FROM rag.users ORDER BY id")
+        rows = cur.fetchall()
+        users = [{"id":r[0],"name":r[1],"email":r[2],"role":r[3],"dept":r[4],"avatar":r[5]} for r in rows]
+        cur.close()
+        conn.close()
+        return {"status":"ok","users":users}
     except Exception as e:
         return {"status":"error","detail":str(e)}
