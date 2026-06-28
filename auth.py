@@ -62,9 +62,9 @@ def register_user(name: str, email: str, password: str, department: str = "") ->
     try:
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO rag.users (name, email, password, role, dept, avatar)
+            INSERT INTO rag.users (username, email, password_hash, role, dept, avatar)
             VALUES (%s, %s, %s, 'tech', %s, %s)
-            RETURNING id, name, email, role, dept, avatar, created_at
+            RETURNING id, username, email, role, dept, avatar
         """, (name, email, hashed, department, avatar))
         row = cur.fetchone()
         conn.commit()
@@ -97,7 +97,7 @@ def login_user(email: str, password: str) -> dict:
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT id, name, email, role, dept, avatar, password
+            SELECT id, username, email, role, dept, avatar, password_hash
             FROM rag.users
             WHERE email = %s
         """, (email,))
@@ -138,7 +138,7 @@ def get_user_by_token(token: str) -> dict | None:
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT id, name, email, role, dept, avatar
+            SELECT id, username, email, role, dept, avatar
             FROM rag.users WHERE id = %s
         """, (user_id,))
         row = cur.fetchone()
