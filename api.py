@@ -15,15 +15,13 @@ import psycopg2
 app = FastAPI()
 
 app.add_middleware(
+    app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://sap-api-advisor.vercel.app",
-        "https://sap-api-advisor-479lil8xx-upashak.vercel.app",
-        ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+)
 )
 
 # ── Pydantic models ───────────────────────────────────────────────────────────
