@@ -1,6 +1,6 @@
 # ── Imports ─────────────────────────────────────────────────────────────────
 from fastapi                    import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors    import CORSMiddleware
 from fastapi.concurrency        import run_in_threadpool
 from pydantic                   import BaseModel
 from typing                     import Literal
@@ -16,11 +16,16 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "http://localhost:5173",
+        "https://sap-api-advisor.vercel.app",
+        "https://sap-api-advisor-479lil8xx-upashak.vercel.app",
+        ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # ── Pydantic models ───────────────────────────────────────────────────────────
 
 class SearchRequest(BaseModel):
